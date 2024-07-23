@@ -24,7 +24,7 @@ namespace CaixaEletronico
             InitializeComponent();
         }
 
-        SqlConnection conn = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;User ID=JUNIOR\\Junio;Initial Catalog=Jovem Programador;Data Source=localhost\\SQLEXPRESS");
+        Conexao conn = new Conexao();
 
         private void SalvarCadastro_Click(object sender, EventArgs e)
         {
@@ -57,27 +57,31 @@ namespace CaixaEletronico
                     string nome = txtNomeCadastro.Text;
                     string senha = txtSenhaCadastro.Text;
                     string email = txtEmailCadastro.Text;
-                    string sql = "INSERT INTO Cadastro (nome, senha, email) VALUES (@nome,@senha,@email)";
+                    string sql = "INSERT INTO Pessoa (nome, senha, email) VALUES (@nome,@senha,@email)";
 
-                    SqlCommand cm = new SqlCommand(sql, conn); //comando para mandar dados para o banco
+                    SqlCommand cm = new SqlCommand(sql, conn.bancoDados); //comando para mandar dados para o banco
 
                     cm.Parameters.Add("@nome", SqlDbType.VarChar).Value = nome;
-                    cm.Parameters.Add("@senha", SqlDbType.Int).Value = senha;
+                    cm.Parameters.AddWithValue("@senha", senha);
                     cm.Parameters.Add("@email", SqlDbType.VarChar).Value = email;
 
-                    conn.Open();
+                    conn.Conectar();
                     cm.ExecuteNonQuery();
                     MessageBox.Show("Cadastro realizado com sucesso!", "Novo Cadastro", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Close();
+
+                    var login = new Login();
+                    login.Show();
+
                 }
                 catch (Exception erro)
                 {
                     MessageBox.Show(erro.Message);
-                    conn.Close();
+                    conn.Desconectar();
                 }
                 finally
                 {
-                    conn.Close();
+                    conn.Desconectar();
                 }
 
 
@@ -104,6 +108,9 @@ namespace CaixaEletronico
         private void FecharCadastro_Click(object sender, EventArgs e)
         {
             Close();
+
+            var login = new Login();
+            login.Show();
         }//Fechar cadastro
 
         private void MinimizarCadastro_Click(object sender, EventArgs e)
@@ -113,10 +120,16 @@ namespace CaixaEletronico
 
         private void txtSenhaCadastro_TextChanged(object sender, EventArgs e)
         {
-            if(txtSenhaCadastro.Text.Length == 12)
+            if (txtSenhaCadastro.Text.Length == 12)
             {
                 MessageBox.Show("Limite de caractere atingido!", "Alerta", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

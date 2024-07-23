@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Reflection.PortableExecutable;
 
 namespace CaixaEletronico
 {
@@ -14,41 +15,62 @@ namespace CaixaEletronico
             InitializeComponent();
         }
 
-        SqlConnection conn = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;User ID=JUNIOR\\Junio;Initial Catalog=Jovem Programador;Data Source=localhost\\SQLEXPRESS");
+        public String NomePessoa {  get; set; } 
 
+        Conexao conn = new Conexao();
         SqlCommand cm = new SqlCommand(); //comando para mandar dados para o banco
-
         SqlDataReader db; //recebe os dados do banco
+
+        Transacao transacao = new Transacao();
 
         private void Entrar_Click(object sender, EventArgs e)
         {
-            if(txtSenha.Text == "" || txtLogin.Text == "")
+            if (txtSenha.Text == "" || txtLogin.Text == "")
             {
-                MessageBox.Show("Informe seus dados!","Atenção!",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                MessageBox.Show("Informe seus dados!", "Atenção!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 try
                 {
-                    conn.Open();
-                    cm.CommandText = "select * from Cadastro where nome =('"+txtLogin.Text+"') and senha =('"+txtSenha.Text+"')";//Busca os dados na tabela selecionada no banco
-                    cm.Connection = conn;//Estabelece conexão
+                    conn.Conectar();
+                    cm.CommandText = "select * from Pessoa where nome =('" + txtLogin.Text + "') and senha =('" + txtSenha.Text + "')";//Busca os dados na tabela selecionada no banco
+                    cm.Connection = conn.bancoDados;//Estabelece conexão
                     db = cm.ExecuteReader();//Executa a leitura do banco.
 
-                    if(db.HasRows)
+
+                    int codigoPessoa = 0;
+
+                    if (db.HasRows)
                     {
-                        //menu.Show();
-                        //this.Hide();//Oculta a jenela que esta aberta.
+                        db.Read();
+                        codigoPessoa = db.GetInt32(0);
+                        String nomePessoa = db.GetString(1);
+
+                        conn.ValidarConta(codigoPessoa);
+
+                        var telaPrincipal = new telaMenuPrincipal();
+                        telaPrincipal.NomePessoa = nomePessoa;
+                        telaPrincipal.CodigoConta = conn.CodigoConta(codigoPessoa);
+                        
+                        MessageBox.Show($"Bem-vindo ao Sistema!", "Sucesso!", MessageBoxButtons.OK);
+
+                        telaPrincipal.Show();
+                        this.Hide();
+
                     }//Seu houver o usuário cadastro no banco de dados ele será direcionado para o menu.
                     else
                     {
                         MessageBox.Show("Usuário ou senha inválida!", "Atenção!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
+
+                    db.Close();
+                    conn.Desconectar();
                 }
-                catch (Exception Erro) 
+                catch (Exception Erro)
                 {
                     MessageBox.Show(Erro.Message);
-                    conn.Close();
+                    conn.Desconectar();
                 }
             }
         }//Botão Entrar 
@@ -57,6 +79,7 @@ namespace CaixaEletronico
         {
             var cadastro = new Cadastro();
             cadastro.Show();
+            this.Hide();
         }//Botão criar conta
 
         private void FecharLogin_Click(object sender, EventArgs e)
@@ -84,6 +107,16 @@ namespace CaixaEletronico
         {
             this.WindowState = FormWindowState.Maximized;
         }//Minimizar tela login
+
+        private void panel2_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void LinkEsqueceuSenha_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show("Favor contatar o Administrador!", "Atenção!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
     }
 }

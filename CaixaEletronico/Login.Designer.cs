@@ -144,9 +144,9 @@
             labelTelaLogin.ForeColor = SystemColors.HighlightText;
             labelTelaLogin.Location = new Point(3, 5);
             labelTelaLogin.Name = "labelTelaLogin";
-            labelTelaLogin.Size = new Size(87, 19);
+            labelTelaLogin.Size = new Size(141, 19);
             labelTelaLogin.TabIndex = 2;
-            labelTelaLogin.Text = "Meu Banco";
+            labelTelaLogin.Text = "Caixa Eletrônico JP";
             // 
             // FecharLogin
             // 
@@ -164,8 +164,7 @@
             // 
             // panel2
             // 
-            panel2.BackColor = Color.Transparent;
-            panel2.BackgroundImage = (Image)resources.GetObject("panel2.BackgroundImage");
+            panel2.BackColor = Color.Black;
             panel2.BackgroundImageLayout = ImageLayout.Stretch;
             panel2.Controls.Add(labelUsuario);
             panel2.Controls.Add(LinkCriarConta);
@@ -182,6 +181,7 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(600, 420);
             panel2.TabIndex = 2;
+            panel2.Paint += panel2_Paint_1;
             // 
             // LinkCriarConta
             // 
@@ -238,8 +238,9 @@
             LinkEsqueceuSenha.TabIndex = 6;
             LinkEsqueceuSenha.TabStop = true;
             LinkEsqueceuSenha.Text = "Esqueceu a senha?";
+            LinkEsqueceuSenha.LinkClicked += LinkEsqueceuSenha_LinkClicked;
             // 
-            // Form1
+            // Login
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -250,7 +251,7 @@
             Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ForeColor = SystemColors.ControlText;
             FormBorderStyle = FormBorderStyle.None;
-            Name = "Form1";
+            Name = "Login";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Caixa Eletrônico";

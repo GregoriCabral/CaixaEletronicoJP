@@ -197,8 +197,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Transparent;
-            panel1.BackgroundImage = (Image)resources.GetObject("panel1.BackgroundImage");
+            panel1.BackColor = Color.Black;
             panel1.BackgroundImageLayout = ImageLayout.Stretch;
             panel1.Controls.Add(labelNomeCadastar);
             panel1.Controls.Add(btnSalvarCadastro);
@@ -213,6 +212,7 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(600, 395);
             panel1.TabIndex = 2;
+            panel1.Paint += panel1_Paint;
             // 
             // Cadastro
             // 
